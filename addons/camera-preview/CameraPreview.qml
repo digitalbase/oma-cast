@@ -12,10 +12,12 @@ Item {
 
   function open(payload) {
     root.opened = true
+    preview.visible = true
   }
 
   function close() {
     root.opened = false
+    preview.visible = false
   }
 
   function dismiss() {
@@ -37,13 +39,15 @@ Item {
 
   FloatingWindow {
     id: preview
-    visible: root.opened
+    property bool wasVisible: false
+    visible: false
     implicitWidth: 960
     implicitHeight: 600
     title: strings.t("title", "Camera preview")
     color: Commons.Color.background
     onVisibleChanged: {
-      if (!visible && root.opened) root.dismiss()
+      if (visible) wasVisible = true
+      else if (wasVisible && root.opened) root.dismiss()
     }
 
     Item {
