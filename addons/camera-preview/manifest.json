@@ -4,6 +4,11 @@
   "name": "Camera preview",
   "version": "0.1.0",
   "description": "Check your camera before a meeting, without recording or audio",
-  "kinds": ["panel"],
-  "entryPoints": { "panel": "CameraPreview.qml" }
+  "kinds": [
+    "panel"
+  ],
+  "entryPoints": {
+    "panel": "CameraPreview.qml"
+  },
+  "keepLoaded": true
 }
