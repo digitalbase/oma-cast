@@ -27,13 +27,19 @@ Item {
 
   Commons.Translations { id: strings; directory: Qt.resolvedUrl("i18n") }
   MediaDevices { id: devices }
-  Camera {
-    id: camera
-    cameraDevice: devices.defaultVideoInput
+  readonly property var camera: cameraLoader.item
+  Loader {
+    id: cameraLoader
     active: root.opened && devices.videoInputs.length > 0
+    sourceComponent: Component {
+      Camera {
+        cameraDevice: devices.defaultVideoInput
+        active: true
+      }
+    }
   }
   CaptureSession {
-    camera: camera
+    camera: root.camera
     videoOutput: video
   }
 
@@ -77,7 +83,7 @@ Item {
             color: Commons.Color.foreground
           }
         }
-        onActivated: camera.cameraDevice = devices.videoInputs[currentIndex]
+        onActivated: { if (root.camera) root.camera.cameraDevice = devices.videoInputs[currentIndex] }
       }
 
       VideoOutput {
@@ -97,8 +103,8 @@ Item {
         wrapMode: Text.Wrap
         color: Commons.Color.foreground
         textFormat: Text.PlainText
-        visible: devices.videoInputs.length === 0 || camera.error !== Camera.NoError
-        text: devices.videoInputs.length === 0 ? strings.t("noCamera", "No camera found. Connect a camera and try again.") : strings.t("cameraError", "Could not open the camera. Close any meeting app using it and try again.\n%1").arg(camera.errorString)
+        visible: devices.videoInputs.length === 0 || (root.camera && root.camera.error !== Camera.NoError)
+        text: devices.videoInputs.length === 0 ? strings.t("noCamera", "No camera found. Connect a camera and try again.") : strings.t("cameraError", "Could not open the camera. Close any meeting app using it and try again.\n%1").arg(root.camera ? root.camera.errorString : "")
       }
     }
   }
